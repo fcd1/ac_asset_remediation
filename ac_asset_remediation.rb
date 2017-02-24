@@ -70,9 +70,11 @@ def remediate_content_datastream(ac_obj)
   new_content_ds = ac_obj.datastreams['content']
 
   # set the dcLocation of the new datastream ('content')
-  # fcd1, 02/20/17: for now, just use the hard coded location I believe works
-  # for ac:110961
-  new_content_ds.dsLocation = "http://localhost:8983/fedora/get/ac:110961/CONTENT/2012-04-13T11:31:43.000Z"
+
+  # As an example, here is the desired dsLocation for ac:110961
+  # new_content_ds.dsLocation = "http://localhost:8983/fedora/get/ac:110961/CONTENT/2012-04-13T11:31:43.000Z"
+  new_content_ds.dsLocation =
+    "#{ac_obj.repository.config[:url]}/get/#{ac_obj.pid}/CONTENT/#{original_content_ds.dsCreateDate.utc.strftime("%Y-%m-%dT%H:%M:%S.%3NZ")}"
 
   # save the new datastream ('content')
   # IMPORTANT: This initial save has to be done here. If not, subsequent save calls in this method
