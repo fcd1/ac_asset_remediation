@@ -15,14 +15,27 @@ def pids
   Array.new YAML.load_file('fedora_object_pids.yml')
 end
 
-def get_dc_type(dc_datastream)
-  dc_ds_content = dc_datastream.content.body
+def get_dc_type(ac_obj)
+  dc_ds = ac_obj.datastreams['DC']
+  dc_ds_content = dc_ds.content.body
   # puts dc_ds_content
   re = %r{<dc:type>(.*)</dc:type>}
   b = re.match(dc_ds_content)
   # puts b.inspect
   # puts b[0]
-  puts b[1]
+  # puts b[1]
+  b[1]
+end
+
+def set_dc_type(ac_obj, dc_type)
+  dc_ds = ac_obj.datastreams['DC']
+  dc_ds_content = dc_ds.content.body
+  puts dc_ds_content
+  re = %r{<dc:type>(.*)</dc:type>}
+  dc_ds_content.sub!(re,"<dc:type>#{dc_type}</dc:type>")
+  puts dc_ds_content
+  dc_ds.content=dc_ds_content
+  dc_ds.save
 end
 
 def get_dc_format(dc_datastream)
@@ -124,7 +137,7 @@ CONFIG =  ActiveSupport::HashWithIndifferentAccess.new YAML.load_file('config.ym
 
 # read in the hyacinth allowed types for dc:type
 ALLOWED_DC_TYPES = Array.new CONFIG[:hyacinth][:allowed_dc_types]
-puts ALLOWED_DC_TYPES
+# puts ALLOWED_DC_TYPES
 
 raise 'url of repository missing' unless CONFIG.has_key? :fedora_repository
 raise 'user for repository missing' unless CONFIG[:fedora_repository].has_key? :user
@@ -138,7 +151,19 @@ repo = Rubydora.connect url: repoinfo[:url], user: repoinfo[:user], password: re
 # process each object
 pids.each do |pid|
   ac_obj = repo.find(pid)
-  # puts ac_obj.inspect
+
+  dc_type = get_dc_type ac_obj
+  puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{dc_type}"
+
+  # fcd1, 03/06/17: testing the set_dc_type method
+  # set_dc_type(ac_obj, 'StillImage')
+  # puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{dc_type}"
+
+  if ALLOWED_DC_TYPES.include? dc_type
+    puts "DC Type is valid"
+  else
+    puts "DC Type is invalid"
+  end
 
   # remediate the DC type
   # remediate_dc_type ac_obj
@@ -152,4 +177,3 @@ pids.each do |pid|
   # add extent size_of_datastream for 'content' datastream
   add_relationship_to_content_datastream_predicate_extent_object_size(ac_obj)  
 end
-
