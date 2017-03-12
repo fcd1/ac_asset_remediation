@@ -1,11 +1,7 @@
-# requires
 require 'yaml'
 require 'active_support/core_ext/hash'
 require 'rubydora'
-
-puts 'Starting remediation of AC assets'
-
-# function definitions
+require_relative 'asset_remediation'
 
 # following is factored out as function in case the
 # we decide to change format of the information within
@@ -15,119 +11,9 @@ def pids
   Array.new YAML.load_file('fedora_object_pids.yml')
 end
 
-def get_dc_type(ac_obj)
-  dc_ds = ac_obj.datastreams['DC']
-  dc_ds_content = dc_ds.content.body
-  # puts dc_ds_content
-  re = %r{<dc:type>(.*)</dc:type>}
-  b = re.match(dc_ds_content)
-  # puts b.inspect
-  # puts b[0]
-  # puts b[1]
-  b[1]
-end
-
-def set_dc_type(ac_obj, dc_type)
-  dc_ds = ac_obj.datastreams['DC']
-  dc_ds_content = dc_ds.content.body
-  puts dc_ds_content
-  re = %r{<dc:type>(.*)</dc:type>}
-  dc_ds_content.sub!(re,"<dc:type>#{dc_type}</dc:type>")
-  puts dc_ds_content
-  dc_ds.content=dc_ds_content
-  dc_ds.save
-end
-
-def get_dc_format(dc_datastream)
-  dc_ds_content = dc_datastream.content.body
-  # puts dc_ds_content
-  re = %r{<dc:format>(.*)</dc:format>}
-  b = re.match(dc_ds_content)
-  # puts b.inspect
-  # puts b[0]
-  puts b[1]
-end
-
-def remediate_dc_type(ac_obj, new_type)
-  # first, retirieve the DC datastream
-  dc_ds = ac_obj.datastreams['DC']
-  # puts dc_ds.inspect
-  # puts dc_ds
-  get_dc_type dc_ds
-end
-
-# This method will add hasModel genericResource
-def add_generic_reource_to_has_model(ac_obj)
-  # first, need to get the api instance
-  api = ac_obj.repository.api
-
-  # get uri of object
-  ac_obj_uri = ac_obj.uri
-
-  # add the relationhip
-  resp = api.add_relationship(pid: ac_obj_uri,
-                              subject: ac_obj_uri,
-                              predicate: 'info:fedora/fedora-system:def/model#hasModel',
-                              object:'info:fedora/ldpd:GenericResource',
-                              isLiteral: false)
-end
-
-# The content datastream in the AC asset fedora objects have
-# a datastream ID of CONTENT. However, hyacinth requires the
-# id to be 'content'. This method will duplicate the original
-# datastream; the new datastream will have to correct ID
-def remediate_content_datastream(ac_obj)
-  # retrieve original content datastream
-  original_content_ds = ac_obj.datastreams['CONTENT']
-  # create the new datastream
-  new_content_ds = ac_obj.datastreams['content']
-
-  # set the dcLocation of the new datastream ('content')
-
-  # As an example, here is the desired dsLocation for ac:110961
-  # new_content_ds.dsLocation = "http://localhost:8983/fedora/get/ac:110961/CONTENT/2012-04-13T11:31:43.000Z"
-  new_content_ds.dsLocation =
-    "#{ac_obj.repository.config[:url]}/get/#{ac_obj.pid}/CONTENT/#{original_content_ds.dsCreateDate.utc.strftime("%Y-%m-%dT%H:%M:%S.%3NZ")}"
-
-  # save the new datastream ('content')
-  # IMPORTANT: This initial save has to be done here. If not, subsequent save calls in this method
-  # will not go through (attempts to update the datastreams which does not yet exist).
-  new_content_ds.save
-
-  # set the MIME type to be equal to the original CONTENT datastream
-  new_content_ds.profile['dsMIME']=original_content_ds.profile['dsMIME']
-
-  # set the dsLabel to be euql to the dsLabel of the original CONTENT datastream
-  new_content_ds.dsLabel=original_content_ds.dsLabel
-
-  # save the new datastream ('content')
-  new_content_ds.save
-end
-
-# Following will add a relationship to RELS_INT, using the given datastream
-# as the subject of triple.
-# The predicate is hard coded to 'http://purl.org/dc/terms/extent', and
-# the object will be the size of the contents of the datastream
-# RestApiClient#add_relationship
-# NOTE: as far as duplicating the CONTENT datastream into a datastream with
-# psid of 'content', the following method should be called with the new
-# datastream (i.e. psid 'content')
-def add_relationship_to_content_datastream_predicate_extent_object_size(ac_obj)
-  # first, need to get the api instance
-  api = ac_obj.repository.api
-
-  # next, get datastream with DSID 'content'
-  content_ds = ac_obj.datastreams['content']
-
-  # get uri of object
-  ac_obj_uri = ac_obj.uri
-
-  # add the relationship
-  api.add_relationship(pid: ac_obj_uri,
-                       subject: "#{ac_obj_uri}/#{content_ds.dsid}",
-                       predicate: 'http://purl.org/dc/terms/extent',
-                       object: content_ds.dsSize,
-                       isLiteral: true )
+# add module AssetRemediation to Rubydora::DigitalObject
+class Rubydora::DigitalObject
+  include AssetRemediation
 end
 
 # read configs from yaml file. Complain if config is missing
@@ -146,34 +32,44 @@ raise 'password for repository missing' unless CONFIG[:fedora_repository].has_ke
 
 repoinfo = CONFIG[:fedora_repository]
 repo = Rubydora.connect url: repoinfo[:url], user: repoinfo[:user], password: repoinfo[:password]
-# puts repo.inspect
+puts "Using Fedora Commons instance location at #{repo.config[:url]}"
 
 # process each object
 pids.each do |pid|
+
+  puts "Looking for fedora object with pid #{pid}"
+
+  # fcd1, 03/08/17: write an expection for this
   ac_obj = repo.find(pid)
 
-  dc_type = get_dc_type ac_obj
+  dc_type =  ac_obj.get_dc_type
+
   puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{dc_type}"
 
   # fcd1, 03/06/17: testing the set_dc_type method
-  # set_dc_type(ac_obj, 'StillImage')
+  # ac_obj.set_dc_type 'Text'
   # puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{dc_type}"
 
   if ALLOWED_DC_TYPES.include? dc_type
     puts "DC Type is valid"
   else
     puts "DC Type is invalid"
+
+    # fcd1, 03/12/17: only do the following in certain all objects
+    # should have DC type set to 'Text'
+    # puts "Seting DC Type to Text"
+    # ac_obj.set_dc_type 'Text'
   end
 
   # remediate the DC type
   # remediate_dc_type ac_obj
 
   # Add genericResource to RELS_EXT hasModel
-  add_generic_reource_to_has_model ac_obj
+  ac_obj.add_generic_reource_to_has_model
 
   # create the new 'content' datastream based on the existing 'CONTENT' datastream
-  remediate_content_datastream ac_obj
+  ac_obj.copy_content_datastream('CONTENT','content')
 
   # add extent size_of_datastream for 'content' datastream
-  add_relationship_to_content_datastream_predicate_extent_object_size(ac_obj)  
+  ac_obj.add_relationship_to_content_datastream_predicate_extent_object_size
 end
