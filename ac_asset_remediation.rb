@@ -1,7 +1,7 @@
 require 'yaml'
 require 'active_support/core_ext/hash'
 require 'rubydora'
-require_relative 'asset_remediation'
+require_relative 'datastream_transformation'
 
 # following is factored out as function in case the
 # we decide to change format of the information within
@@ -13,7 +13,7 @@ end
 
 # add module AssetRemediation to Rubydora::DigitalObject
 class Rubydora::DigitalObject
-  include AssetRemediation
+  include DatastreamTransformation
 end
 
 # read configs from yaml file. Complain if config is missing

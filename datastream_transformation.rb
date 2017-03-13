@@ -3,7 +3,7 @@
 # require 'active_support/core_ext/hash'
 # require 'rubydora'
 
-module AssetRemediation
+module DatastreamTransformation
   # function definitions
 
   # following is factored out as function in case the
