@@ -87,10 +87,6 @@ module DatastreamTransformation
 
     # save the new datastream ('content')
     new_content_ds.save
-
-
-
-    # fcd1, 03/08/17: following commented out while I debug, but it is a valid production line
   end
 
   # Following will add a relationship to RELS_INT, using the given datastream
