@@ -19,16 +19,13 @@ end
 # read configs from yaml file. Complain if config is missing
 # change the config filename to default to name in code but sup
 CONFIG =  ActiveSupport::HashWithIndifferentAccess.new YAML.load_file('config.yml')
-# puts CONFIG
 
 # read in the hyacinth allowed types for dc:type
 ALLOWED_DC_TYPES = Array.new CONFIG[:hyacinth][:allowed_dc_types]
-# puts ALLOWED_DC_TYPES
 
 raise 'url of repository missing' unless CONFIG.has_key? :fedora_repository
 raise 'user for repository missing' unless CONFIG[:fedora_repository].has_key? :user
 raise 'password for repository missing' unless CONFIG[:fedora_repository].has_key? :password
-# raise 'foobar for repository missing' unless CONFIG[:fedora_repository].has_key? :foobar
 
 repoinfo = CONFIG[:fedora_repository]
 repo = Rubydora.connect url: repoinfo[:url], user: repoinfo[:user], password: repoinfo[:password]
