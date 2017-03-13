@@ -40,7 +40,6 @@ pids.each do |pid|
     ac_obj = repo.find(pid)
   rescue Rubydora::RecordNotFound
     puts '************************ PID not found ***********************'
-    puts CONFIG[:logfile]
     next
   end
 
