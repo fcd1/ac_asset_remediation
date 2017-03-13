@@ -39,8 +39,13 @@ pids.each do |pid|
 
   puts "Looking for fedora object with pid #{pid}"
 
-  # fcd1, 03/08/17: write an expection for this
-  ac_obj = repo.find(pid)
+  begin
+    ac_obj = repo.find(pid)
+  rescue Rubydora::RecordNotFound
+    puts '************************ PID not found ***********************'
+    puts CONFIG[:logfile]
+    next
+  end
 
   dc_type =  ac_obj.get_dc_type
 
