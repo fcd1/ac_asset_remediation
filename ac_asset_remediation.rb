@@ -32,7 +32,7 @@ puts "Repository url is set to #{repoinfo[:url]}"
 puts "Is this correct? If so, please type in 'Yes' to continue with the script"
 response = gets.chomp
 raise "User aborted script by not entering 'Yes'" unless response.eql?('Yes')
-raise "User Answered 'Yes'"
+puts "User Answered 'Yes'"
 repo = Rubydora.connect url: repoinfo[:url], user: repoinfo[:user], password: repoinfo[:password]
 puts "Using Fedora Commons instance location at #{repo.config[:url]}"
 
