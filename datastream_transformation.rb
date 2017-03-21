@@ -26,6 +26,18 @@ module DatastreamTransformation
     b[1]
   end
 
+  # get the mime type of the datastream with ID ds_id
+  def get_ds_mime_type ds_id
+    ds = self.datastreams[ds_id]
+    ds.mimeType unless ds.nil?
+  end
+
+  # get the label of the datastream with ID ds_id
+  def get_ds_label ds_id
+    ds = self.datastreams[ds_id]
+    ds.dsLabel unless ds.nil?
+  end
+
   def set_dc_type(dc_type)
     dc_ds = self.datastreams['DC']
     dc_ds_content = dc_ds.content.body
