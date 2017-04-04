@@ -26,6 +26,15 @@ module DatastreamTransformation
     b[1]
   end
 
+  def get_dc_format
+    dc_ds = self.datastreams['DC']
+    dc_ds_content = dc_ds.content.body
+    # puts dc_ds_content
+    re = %r{<dc:format>(.*)</dc:format>}
+    b = re.match(dc_ds_content)
+    b[1] unless b.nil?
+  end
+
   # get the mime type of the datastream with ID ds_id
   def get_ds_mime_type ds_id
     ds = self.datastreams[ds_id]
