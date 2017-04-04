@@ -4,7 +4,7 @@ require 'active_support/core_ext/hash'
 require 'rubydora'
 require_relative 'datastream_transformation'
 
-puts 'Starting listing of DC type for AC assets'
+puts 'Getting requested info for the given fedora pids'
 
 # function definitions
 
@@ -48,6 +48,8 @@ pids.each do |pid|
 
   puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{ac_obj.get_dc_type}"
   puts "Processing fedora object #{ac_obj.pid}, DC Format currently set to #{ac_obj.get_dc_format}"
+  puts "Processing fedora object #{ac_obj.pid}, mime type for CONTENT DS set to #{ac_obj.get_ds_mime_type 'CONTENT'}"
+  puts "Processing fedora object #{ac_obj.pid}, label for CONTENT DS set to #{ac_obj.get_ds_label 'CONTENT'}"
   puts
 end
 
