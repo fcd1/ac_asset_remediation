@@ -60,8 +60,13 @@ pids.each do |pid|
     next
   end
 
-  # puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{ac_obj.get_dc_type}"
-  # puts "Set DC type to Sound"
+  dc_type = ac_obj.get_dc_type
+  puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{ac_obj.get_dc_type}"
+
+  # if DC type is currently set to one of hyacinth-approved DC types, no-op
+  next if ALLOWED_DC_TYPES.include? dc_type
+
+  puts "DC Type not in list of hyacinth-approved DC types"
   # ac_obj.set_dc_type 'Sound'
   # puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{ac_obj.get_dc_type}"
   puts
