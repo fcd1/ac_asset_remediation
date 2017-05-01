@@ -57,6 +57,7 @@ pids.each do |pid|
   puts "Processing fedora object #{ac_obj.pid}, DC Format currently set to #{ac_obj.get_dc_format}"
   puts "Processing fedora object #{ac_obj.pid}, mime type for CONTENT DS set to #{ac_obj.get_ds_mime_type 'CONTENT'}"
   puts "Processing fedora object #{ac_obj.pid}, label for CONTENT DS set to #{ac_obj.get_ds_label 'CONTENT'}"
+  puts "Processing fedora object #{ac_obj.pid}, datastreams are #{ac_obj.datastreams.keys}"
   puts
 end
 
