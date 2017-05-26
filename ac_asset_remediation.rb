@@ -3,6 +3,10 @@ require 'active_support/core_ext/hash'
 require 'rubydora'
 require_relative 'datastream_transformation'
 
+puts 'This script remediates assets for the given fedora pids'
+
+# function definitions
+
 # following is factored out as function in case the
 # we decide to change format of the information within
 # the yaml file -- these format changes would be localized
@@ -29,10 +33,13 @@ raise 'password for repository missing' unless CONFIG[:fedora_repository].has_ke
 
 repoinfo = CONFIG[:fedora_repository]
 puts "Repository url is set to #{repoinfo[:url]}"
-puts "Is this correct? If so, please type in 'Yes' to continue with the script"
-response = gets.chomp
-raise "User aborted script by not entering 'Yes'" unless response.eql?('Yes')
-puts "User Answered 'Yes'"
+puts "You have 5 seconds to interrupt this script (Using ctl-c)"
+(0..5).each do |i|
+  print "#{i}.."
+  sleep 1
+end
+puts 'Remediating assets for the given fedora pids'
+
 repo = Rubydora.connect url: repoinfo[:url], user: repoinfo[:user], password: repoinfo[:password]
 puts "Using Fedora Commons instance location at #{repo.config[:url]}"
 
