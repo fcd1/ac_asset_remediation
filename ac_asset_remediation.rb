@@ -100,8 +100,8 @@ class AssetRemediationProcessing
 
         # fcd1, 03/12/17: only do the following in certain all objects
         # should have DC type set to 'Text'
-        # puts "Seting DC Type to Text"
-        # ac_obj.set_dc_type 'Text'
+        puts "Seting DC Type to Text"
+        ac_obj.set_dc_type 'Text'
       end
 
       # remediate the DC type
@@ -116,6 +116,9 @@ class AssetRemediationProcessing
       # add extent size_of_datastream for 'content' datastream
       ac_obj.add_relationship_to_content_datastream_predicate_extent_object_size
 
+      puts "Sleep for 5 seconds"
+      sleep 5
+
     end
 
   end
@@ -124,6 +127,7 @@ end
 
 ##############################
 # Main Processing
+
 arp = AssetRemediationProcessing.new
 
 arp.process_command_line_options_and_args
@@ -140,8 +144,8 @@ arp.process_pid_files
 puts "Repository url is set to #{arp.repo_info[:url]}"
 puts
 
-puts "You have 5 seconds to interrupt this script (Using ctl-c)"
-(0..5).each do |i|
+puts "You have 10 seconds to interrupt this script (Using ctl-c)"
+(0..10).each do |i|
   print "#{i}.."
   sleep 1
 end

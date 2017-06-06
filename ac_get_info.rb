@@ -5,9 +5,6 @@ require 'active_support/core_ext/hash'
 require 'rubydora'
 require_relative 'datastream_transformation'
 
-puts 'This script retrieves info for the given fedora pids'
-puts
-
 class GetInfoProcessing
 
   attr_reader :options, :pids_by_file, :args, :repo_info
@@ -98,6 +95,10 @@ class Rubydora::DigitalObject
 end
 
 # Main Processing
+
+puts 'This script retrieves info for the given fedora pids'
+puts
+
 gip = GetInfoProcessing.new
 
 gip.process_command_line_options_and_args
@@ -112,8 +113,9 @@ gip.process_pid_files
 # puts gip.pids_by_file.inspect
 
 puts "Repository url is set to #{gip.repo_info[:url]}"
-puts "You have 5 seconds to interrupt this script (Using ctl-c)"
-(0..5).each do |i|
+puts
+puts "You have 10 seconds to interrupt this script (Using ctl-c)"
+(0..10).each do |i|
   print "#{i}.."
   sleep 1
 end
@@ -127,7 +129,3 @@ gip.pids_by_file.each  do |filename, pid_array|
   # puts pid_array.inspect
   gip.process_pids pid_array
 end
-
-
-
-
