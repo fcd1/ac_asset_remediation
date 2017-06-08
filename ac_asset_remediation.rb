@@ -76,6 +76,9 @@ class AssetRemediationProcessing
 
   def process_pids(pids)
 
+    count = 0
+    num_of_pids = pids.length
+
     # process each object
     pids.each do |pid|
 
@@ -116,8 +119,11 @@ class AssetRemediationProcessing
       # add extent size_of_datastream for 'content' datastream
       ac_obj.add_relationship_to_content_datastream_predicate_extent_object_size
 
-      puts "Sleep for 5 seconds"
-      sleep 5
+      count += 1
+      puts "number of processed pids: #{count} out of #{num_of_pids}"
+
+      puts "Sleep for 1 seconds"
+      sleep 1
 
     end
 

@@ -80,7 +80,9 @@ class GetInfoProcessing
       puts "Processing fedora object #{ac_obj.pid}, mime type for CONTENT DS set to #{ac_obj.get_ds_mime_type 'CONTENT'}"
       puts "Processing fedora object #{ac_obj.pid}, label for CONTENT DS set to #{ac_obj.get_ds_label 'CONTENT'}"
       puts "Processing fedora object #{ac_obj.pid}, datastreams are #{ac_obj.datastreams.keys}"
+      puts "Processing fedora object #{ac_obj.pid}, profile is #{ac_obj.profile.inspect}"
       puts
+
     end
 
   end
