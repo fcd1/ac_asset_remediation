@@ -64,6 +64,11 @@ class GetInfoProcessing
 
   def process_pids(pids)
 
+    count = 0
+    num_of_pids = pids.length
+    puts "Total number of pids is #{num_of_pids}"
+    puts
+
     # process each object
     pids.each do |pid|
       puts "Looking for fedora object with pid #{pid}"
@@ -81,6 +86,10 @@ class GetInfoProcessing
       puts "Processing fedora object #{ac_obj.pid}, label for CONTENT DS set to #{ac_obj.get_ds_label 'CONTENT'}"
       puts "Processing fedora object #{ac_obj.pid}, datastreams are #{ac_obj.datastreams.keys}"
       puts "Processing fedora object #{ac_obj.pid}, profile is #{ac_obj.profile.inspect}"
+
+      count += 1
+      puts "number of processed pids: #{count} out of #{num_of_pids}"
+
       puts
 
     end

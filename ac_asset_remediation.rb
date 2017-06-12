@@ -78,6 +78,8 @@ class AssetRemediationProcessing
 
     count = 0
     num_of_pids = pids.length
+    puts "Total number of pids is #{num_of_pids}"
+    puts
 
     # process each object
     pids.each do |pid|
