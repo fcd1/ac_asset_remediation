@@ -95,6 +95,9 @@ class AssetRemediationProcessing
       end
 
       dc_type =  ac_obj.get_dc_type
+      moving_image_content_ds_mime_type = ['video/x-flv',
+                                          'video/quicktime',
+                                          'video/mp4']
 
       puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{dc_type}"
 
@@ -103,10 +106,22 @@ class AssetRemediationProcessing
       else
         puts "DC Type is invalid"
 
-        # fcd1, 03/12/17: only do the following in certain all objects
-        # should have DC type set to 'Text'
-        puts "Seting DC Type to Text"
-        ac_obj.set_dc_type 'Text'
+        case
+
+        when moving_image_content_ds_mime_type.include?(ac_obj.get_ds_mime_type('CONTENT'))
+
+          puts "Seting DC Type to MovingImage"
+          ac_obj.set_dc_type 'MovingImage'
+
+        else
+
+          # fcd1, 03/12/17: only do the following in certain all objects
+          # should have DC type set to 'Text'
+          puts "Seting DC Type to Text"
+          ac_obj.set_dc_type 'Text'
+
+        end
+
       end
 
       # remediate the DC type
