@@ -98,6 +98,9 @@ class AssetRemediationProcessing
       moving_image_content_ds_mime_type = ['video/x-flv',
                                           'video/quicktime',
                                           'video/mp4']
+      still_image_content_ds_mime_type = ['image/jpeg']
+      sound_content_ds_mime_type = ['audio/wav',
+                                    'audio/mp3']
 
       puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{dc_type}"
 
@@ -112,6 +115,16 @@ class AssetRemediationProcessing
 
           puts "Seting DC Type to MovingImage"
           ac_obj.set_dc_type 'MovingImage'
+
+        when still_image_content_ds_mime_type.include?(ac_obj.get_ds_mime_type('CONTENT'))
+
+          puts "Seting DC Type to StillImage"
+          ac_obj.set_dc_type 'StillImage'
+
+        when sound_content_ds_mime_type.include?(ac_obj.get_ds_mime_type('CONTENT'))
+
+          puts "Seting DC Type to Sound"
+          ac_obj.set_dc_type 'Sound'
 
         else
 
