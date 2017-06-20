@@ -95,12 +95,18 @@ class AssetRemediationProcessing
       end
 
       dc_type =  ac_obj.get_dc_type
+
+      # fcd1, 6/19/17: This needs to move to a config file
       moving_image_content_ds_mime_type = ['video/x-flv',
                                           'video/quicktime',
                                           'video/mp4']
-      still_image_content_ds_mime_type = ['image/jpeg']
+      still_image_content_ds_mime_type = ['image/jpeg',
+                                          'image/gif']
       sound_content_ds_mime_type = ['audio/wav',
+                                    'audio/mpeg',
                                     'audio/mp3']
+      dataset_content_ds_mime_type = ['application/vnd.ms-excel',
+                                     'text/csv']
 
       puts "Processing fedora object #{ac_obj.pid}, DC Type currently set to #{dc_type}"
 
