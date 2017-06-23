@@ -98,8 +98,9 @@ class AssetRemediationProcessing
 
       # fcd1, 6/19/17: This needs to move to a config file
       moving_image_content_ds_mime_type = ['video/x-flv',
-                                          'video/quicktime',
-                                          'video/mp4']
+                                           'video/quicktime',
+                                           'video/avi',
+                                           'video/mp4']
       still_image_content_ds_mime_type = ['image/jpeg',
                                           'image/gif']
       sound_content_ds_mime_type = ['audio/wav',
